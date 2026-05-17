@@ -1,0 +1,44 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: warehouse-redis
+    ports:
+      - "6379:6379"
+
+  inventory-service:
+    build: ./inventory-service
+    container_name: inventory-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SUPPLY_SERVICE_URL: http://supply-service:8082
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - redis
+
+  supply-service:
+    build: ./supply-service
+    container_name: supply-service
+    ports:
+      - "8082:8082"
+    environment:
+      INVENTORY_SERVICE_URL: http://inventory-service:8081
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - inventory-service
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      INVENTORY_SERVICE_URI: http://inventory-service:8081
+      SUPPLY_SERVICE_URI: http://supply-service:8082
+    depends_on:
+      - inventory-service
+      - supply-service
