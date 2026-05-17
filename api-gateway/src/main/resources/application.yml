@@ -6,33 +6,33 @@ spring:
       routes:
         # Inventory Service routes
         - id: inventory-products
-          uri: http://localhost:8081
+          uri: ${INVENTORY_SERVICE_URI:http://localhost:8081}
           predicates:
             - Path=/api/products/**
 
         - id: inventory-warehouses
-          uri: http://localhost:8081
+          uri: ${INVENTORY_SERVICE_URI:http://localhost:8081}
           predicates:
             - Path=/api/warehouses/**
 
         - id: inventory-stocks
-          uri: http://localhost:8081
+          uri: ${INVENTORY_SERVICE_URI:http://localhost:8081}
           predicates:
             - Path=/api/stocks/**
 
         - id: inventory-batches
-          uri: http://localhost:8081
+          uri: ${INVENTORY_SERVICE_URI:http://localhost:8081}
           predicates:
             - Path=/api/batches/**
 
         # Supply Service routes
         - id: supply-suppliers
-          uri: http://localhost:8082
+          uri: ${SUPPLY_SERVICE_URI:http://localhost:8082}
           predicates:
             - Path=/api/suppliers/**
 
         - id: supply-orders
-          uri: http://localhost:8082
+          uri: ${SUPPLY_SERVICE_URI:http://localhost:8082}
           predicates:
             - Path=/api/supply-orders/**
 
