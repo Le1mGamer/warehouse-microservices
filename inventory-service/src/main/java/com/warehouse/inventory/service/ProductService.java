@@ -5,6 +5,8 @@ import com.warehouse.inventory.exception.ResourceNotFoundException;
 import com.warehouse.inventory.model.Product;
 import com.warehouse.inventory.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +22,16 @@ public class ProductService {
         return productRepository.findAll().stream().map(this::toDto).collect(Collectors.toList());
     }
 
+    @Cacheable(value = "products", key = "#id")
     public ProductDTO getById(Long id) {
+        simulateSlowDatabaseRequest();
+
         return toDto(productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Товар з ID " + id + " не знайдено")));
     }
 
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public ProductDTO create(ProductDTO dto) {
         Product p = toEntity(dto);
         p.setId(null);
@@ -33,6 +39,7 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(value = "products", key = "#id")
     public ProductDTO update(Long id, ProductDTO dto) {
         Product existing = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Товар з ID " + id + " не знайдено"));
@@ -44,11 +51,20 @@ public class ProductService {
     }
 
     @Transactional
+    @CacheEvict(value = "products", key = "#id")
     public void delete(Long id) {
         if (!productRepository.existsById(id)) {
             throw new ResourceNotFoundException("Товар з ID " + id + " не знайдено");
         }
         productRepository.deleteById(id);
+    }
+
+    private void simulateSlowDatabaseRequest() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private ProductDTO toDto(Product p) {
