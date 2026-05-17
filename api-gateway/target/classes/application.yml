@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # Inventory Service routes
+        - id: inventory-products
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/products/**
+
+        - id: inventory-warehouses
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/warehouses/**
+
+        - id: inventory-stocks
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/stocks/**
+
+        - id: inventory-batches
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/batches/**
+
+        # Supply Service routes
+        - id: supply-suppliers
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/suppliers/**
+
+        - id: supply-orders
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/supply-orders/**
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    reactor.netty.http.client: INFO

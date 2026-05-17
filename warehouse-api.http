@@ -1,0 +1,249 @@
+### ==========================================
+### ЛАБОРАТОРНА РОБОТА №3 - Тестові запити
+### Система управління складом
+### ==========================================
+
+### --- ТОВАРИ (Products) ---
+
+### 1. Отримання всіх товарів
+GET http://localhost:8080/api/products
+
+### 2. Отримання товарів з пагінацією (сторінка 0, 5 елементів, сортування за name)
+GET http://localhost:8080/api/products?page=0&size=5&sortBy=name&sortDir=asc
+
+### 3. Пошук товару за назвою
+GET http://localhost:8080/api/products?name=Ноутбук
+
+### 4. Створення товару
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "Ноутбук Dell XPS 15",
+  "unit": "шт",
+  "minStock": 5.0,
+  "description": "Ноутбук для роботи та навчання"
+}
+
+### 5. Отримання товару за ID
+GET http://localhost:8080/api/products/1
+
+### 6. Оновлення товару (PUT)
+PUT http://localhost:8080/api/products/5
+Content-Type: application/json
+
+{
+  "name": "Ноутбук Asus Vivobook",
+  "unit": "шт",
+  "minStock": 10.0,
+  "description": "Оновлений ноутбук для роботи та навчання"
+}
+
+### 7. Видалення товару
+DELETE http://localhost:8080/api/products/1
+
+### 8. Помилка - неіснуючий товар
+GET http://localhost:8080/api/products/999
+
+### --- ПОСТАЧАЛЬНИКИ (Suppliers) ---
+
+### 9. Отримання всіх постачальників
+GET http://localhost:8080/api/suppliers
+
+### 10. Пошук постачальника за назвою
+GET http://localhost:8080/api/suppliers?name=Електроніка
+
+### 11. Створення постачальника
+POST http://localhost:8080/api/suppliers
+Content-Type: application/json
+
+{
+  "name": "ТОВ Електроніка",
+  "contactPerson": "Іван Петренко",
+  "phone": "+380501234567",
+  "email": "info@electronics.ua",
+  "address": "м. Київ, вул. Хрещатик, 1"
+}
+
+### 12. Отримання постачальника за ID
+GET http://localhost:8080/api/suppliers/1
+
+### 13. Оновлення постачальника (PUT)
+PUT http://localhost:8080/api/suppliers/3
+Content-Type: application/json
+
+{
+  "name": "ТОВ ElectronicsApple",
+  "contactPerson": "Іван Петренко",
+  "phone": "+380501234568",
+  "email": "info@electronics-plus.ua",
+  "address": "м. Київ, вул. Хрещатик, 2"
+}
+
+### 14. Видалення постачальника
+DELETE http://localhost:8080/api/suppliers/1
+
+### --- СКЛАДИ (Warehouses) ---
+
+### 15. Отримання всіх складів
+GET http://localhost:8080/api/warehouses
+
+### 16. Створення складу
+POST http://localhost:8080/api/warehouses
+Content-Type: application/json
+
+{
+  "name": "Головний склад №1",
+  "location": "м. Київ, вул. Промислова, 10",
+  "capacity": 10000.0
+}
+
+### 17. Отримання складу за ID
+GET http://localhost:8080/api/warehouses/1
+
+### 18. Оновлення складу (PUT)
+PUT http://localhost:8080/api/warehouses/1
+Content-Type: application/json
+
+{
+  "name": "Головний склад №1 (розширено)",
+  "location": "м. Київ, вул. Промислова, 10",
+  "capacity": 15000.0
+}
+
+### 19. Видалення складу
+DELETE http://localhost:8080/api/warehouses/1
+
+### --- ПАРТІЇ ТОВАРІВ (Batches) ---
+
+### 20. Отримання всіх партій
+GET http://localhost:8080/api/batches
+
+### 21. Створення партії товару
+POST http://localhost:8080/api/batches
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "supplierId": 1,
+  "quantity": 100.0,
+  "arrivalDate": "2026-03-15",
+  "expiryDate": "2027-03-15"
+}
+
+### 22. Отримання партій за товаром
+GET http://localhost:8080/api/batches/product/1
+
+### 23. Отримання партій за постачальником
+GET http://localhost:8080/api/batches/supplier/1
+
+### 24. Оновлення партії (PUT)
+PUT http://localhost:8080/api/batches/1
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "supplierId": 1,
+  "quantity": 150.0,
+  "arrivalDate": "2026-03-15",
+  "expiryDate": "2027-06-15"
+}
+
+### 25. Видалення партії
+DELETE http://localhost:8080/api/batches/1
+
+### --- ЗАЛИШКИ (Stocks) ---
+
+### 26. Отримання всіх залишків
+GET http://localhost:8080/api/stocks
+
+###
+GET http://localhost:8080/api/stocks/low-stock
+
+### 27. Створення залишку
+POST http://localhost:8080/api/stocks
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "warehouseId": 3,
+  "quantity": 9.0
+}
+
+### 28. Отримання залишків за складом
+GET http://localhost:8080/api/stocks/warehouse/1
+
+### 29. Отримання залишків за товаром
+GET http://localhost:8080/api/stocks/product/1
+
+### 30. Оновлення залишку (PUT)
+PUT http://localhost:8080/api/stocks/1
+Content-Type: application/json
+
+{
+  "productId": 7,
+  "warehouseId": 1,
+  "quantity": 4.0
+}
+
+### 31. Поповнення залишку (PATCH)
+PATCH http://localhost:8080/api/stocks/adjust?productId=5&warehouseId=3&delta=190.0
+
+### 32. Списання товару (від'ємна зміна)
+PATCH http://localhost:8080/api/stocks/adjust?productId=5&warehouseId=3&delta=-40.0
+
+### 33. Помилка - списання більше ніж є
+PATCH http://localhost:8080/api/stocks/update-quantity?productId=1&warehouseId=1&quantityChange=-1000.0
+
+### --- ЗАМОВЛЕННЯ НА ПОСТАВКУ (Supply Orders) ---
+
+### 34. Отримання всіх замовлень
+GET http://localhost:8080/api/supply-orders
+
+### 35. Фільтрація замовлень за статусом
+GET http://localhost:8080/api/supply-orders?status=CREATED
+
+### 36. Створення замовлення
+POST http://localhost:8080/api/supply-orders
+Content-Type: application/json
+
+{
+  "supplierId": 1,
+  "productId": 1,
+  "quantity": 50.0,
+  "orderDate": "2026-03-15",
+  "expectedDeliveryDate": "2026-03-25",
+  "status": "CREATED"
+}
+
+### 37. Отримання замовлення за ID
+GET http://localhost:8080/api/supply-orders/1
+
+### 38. Оновлення замовлення (PUT)
+PUT http://localhost:8080/api/supply-orders/1
+Content-Type: application/json
+
+{
+  "supplierId": 1,
+  "productId": 1,
+  "quantity": 75.0,
+  "orderDate": "2026-03-15",
+  "expectedDeliveryDate": "2026-04-01",
+  "status": "CONFIRMED"
+}
+
+### 39. Оновлення статусу замовлення (PATCH)
+PATCH http://localhost:8080/api/supply-orders/1/status?status=DELIVERED
+
+### 40. Видалення замовлення
+DELETE http://localhost:8080/api/supply-orders/1
+
+### 41. Помилка - некоректна валідація
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "",
+  "unit": "",
+  "minStock": -5.0
+}
